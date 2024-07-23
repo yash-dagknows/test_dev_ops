@@ -84,7 +84,7 @@ pipeline {
 
     post {
         always {
-            node('') { // Use an empty label to select any available agent
+            node('') {
                 cleanWs()
             }
         }
