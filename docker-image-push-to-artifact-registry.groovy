@@ -19,15 +19,25 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${GCR_URL}:${BUILD_NUMBER}")
+                    sh """
+                    echo "Building Docker image..."
+                    docker build -t ${GCR_URL}:${BUILD_NUMBER} .
+                    """
                 }
             }
         }
         stage('Push to GCR') {
             steps {
-                script {
-                    docker.withRegistry('https://asia-south1-docker.pkg.dev', "${GCR_CREDENTIALS}") {
-                        docker.image("${GCR_URL}:${BUILD_NUMBER}").push()
+                withCredentials([file(credentialsId: 'gcr-service-account-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                    script {
+                        sh """
+                        echo "Authenticating with Google Cloud..."
+                        gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS}
+                        gcloud auth configure-docker asia-south1-docker.pkg.dev
+
+                        echo "Pushing Docker image to GCR..."
+                        docker push ${GCR_URL}:${BUILD_NUMBER}
+                        """
                     }
                 }
             }
