@@ -16,20 +16,20 @@ pipeline {
                 script {
                     sh '''
                     echo "Installing Docker..."
-                    apt-get update
-                    apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release
-                    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-                    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-                    apt-get update
-                    apt-get install -y docker-ce docker-ce-cli containerd.io
+                    sudo apt-get update
+                    sudo apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release
+                    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+                    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+                    sudo apt-get update
+                    sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
                     echo "Starting Docker..."
-                    service docker start
+                    sudo service docker start
 
                     echo "Installing gcloud..."
-                    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-                    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-                    apt-get update && apt-get install -y google-cloud-sdk
+                    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+                    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+                    sudo apt-get update && sudo apt-get install -y google-cloud-sdk
                     '''
                 }
             }
