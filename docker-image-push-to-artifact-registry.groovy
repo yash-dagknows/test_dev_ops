@@ -2,15 +2,23 @@ pipeline {
     agent any
 
     environment {
-        PROJECT_ID = 'caramel-hallway-365911' // Your GCP project ID
-        REPOSITORY_NAME = 'yash-artifact-registry-test' // Your Artifact Registry repository name
+        PROJECT_ID = 'caramel-hallway-365911'
+        REPOSITORY_NAME = 'yash-artifact-registry-test'
         GCR_URL = "asia-south1-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY_NAME}"
-        GITHUB_REPO = 'yash-dagknows/test_dev_ops' // Your GitHub repository
-        GITHUB_CREDENTIALS = 'yash-dagknows-github-pat' // Jenkins credential ID for GitHub
-        GCR_CREDENTIALS = 'Yash_GCP_Service_Account_Test' // Jenkins credential ID for Google Cloud
+        GITHUB_REPO = 'yash-dagknows/test_dev_ops'
+        GITHUB_CREDENTIALS = 'yash-dagknows-github-pat'
+        GCR_CREDENTIALS = 'Yash_GCP_Service_Account_Test'
     }
 
     stages {
+        stage('Verify Tools') {
+            steps {
+                script {
+                    sh 'docker --version'
+                    sh 'gcloud --version'
+                }
+            }
+        }
         stage('SCM Checkout') {
             steps {
                 git branch: 'main', url: "https://github.com/${GITHUB_REPO}.git", credentialsId: "${GITHUB_CREDENTIALS}"
