@@ -28,6 +28,7 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'yash-dagknows-github-pat', usernameVariable: 'USERNAME', passwordVariable: 'GIT_TOKEN')]) {
                         sh """
+                        set -e
                         git clone -b $Branch https://"\$GIT_TOKEN":x-oauth-basic@github.com/yash-dagknows/test_dev_ops.git
                         cd $env.app_dir
                         """
@@ -53,6 +54,7 @@ pipeline {
                 withAWS(roleAccount: "${account_id}", role: "${aws_role}") {
                     script {
                         sh """
+                        set -e
                         #!/bin/bash
                         export image_tag=\$(aws ssm get-parameter --name "/test_dev_ops/successful-build" --with-decryption --output text --query Parameter.Value)
                         export image_tag_new=\$(sh version.sh \$image_tag)
@@ -71,6 +73,7 @@ pipeline {
     post {
         always {
             echo 'Pipeline execution is now complete.'
+            sh 'ps aux'  // Check if there are any lingering processes
         }
     }
 }
