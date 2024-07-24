@@ -49,15 +49,6 @@ pipeline {
             }
         }
 
-        stage('Debug Environment') {
-            steps {
-                script {
-                    sh "echo PATH is $PATH"
-                    sh "which nohup || echo 'nohup not found'"
-                }
-            }
-        }
-
         stage('Build') {
             steps {
                 withAWS(roleAccount: "${account_id}", role: "${aws_role}") {
@@ -83,13 +74,7 @@ pipeline {
 
     post {
         always {
-            script {
-                if (currentBuild.result == null || currentBuild.result == 'ABORTED') {
-                    // Check specific conditions if you want to ensure it's safe to set SUCCESS
-                    currentBuild.result = 'SUCCESS'
-                }
-                echo 'Final Build Status: ' + currentBuild.result
-            }
+            echo 'Pipeline execution is now complete.'
         }
     }
 }
