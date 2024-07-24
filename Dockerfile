@@ -1,5 +1,5 @@
 #FROM - Image to start building on.
-FROM ubuntu:22.04
+FROM ubuntu:latest
 
 #RUN - Runs a command in the container
 RUN echo "Hello world" > /tmp/hello_world.txt
