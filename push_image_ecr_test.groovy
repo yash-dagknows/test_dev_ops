@@ -69,7 +69,7 @@ pipeline {
                         export image_tag_new=\$(sh version.sh \$image_tag)
                         echo \$image_tag_new
                         cd $app_dir
-                        /kaniko/executor --context $app_dir --dockerfile=Dockerfile --force --destination=public.ecr.aws/n5k3t9x2/test_dev_ops:\$image_tag_new --destination=public.ecr.aws/n5k3t9x2/test_dev_ops:latest --single-snapshot --cache=false --cache-ttl=1h
+                        /kaniko/executor --context $env.app_dir --dockerfile=Dockerfile --force --destination=public.ecr.aws/n5k3t9x2/test_dev_ops:\$image_tag_new --destination=public.ecr.aws/n5k3t9x2/test_dev_ops:latest --single-snapshot --cache=false --cache-ttl=1h
                         aws ssm put-parameter --name "/test_dev_ops/successful-build" --type "String" --value \$image_tag_new --overwrite
                         echo "AWS SSM parameter updated successfully."
                         exit 0
