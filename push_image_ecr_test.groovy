@@ -49,6 +49,15 @@ pipeline {
             }
         }
 
+        stage('Debug Environment') {
+            steps {
+                script {
+                    sh "echo PATH is $PATH"
+                    sh "which nohup || echo 'nohup not found'"
+                }
+            }
+        }
+
         stage('Build') {
             steps {
                 withAWS(roleAccount: "${account_id}", role: "${aws_role}") {
@@ -59,8 +68,8 @@ pipeline {
                         export image_tag=\$(aws ssm get-parameter --name "/test_dev_ops/successful-build" --with-decryption --output text --query Parameter.Value)
                         export image_tag_new=\$(sh version.sh \$image_tag)
                         echo \$image_tag_new
-                        cd $APP_DIR
-                        /kaniko/executor --context $APP_DIR --dockerfile=Dockerfile --force --destination=public.ecr.aws/n5k3t9x2/test_dev_ops:\$image_tag_new --destination=public.ecr.aws/n5k3t9x2/test_dev_ops:latest --single-snapshot --cache=false --cache-ttl=1h
+                        cd $app_dir
+                        /kaniko/executor --context $app_dir --dockerfile=Dockerfile --force --destination=public.ecr.aws/n5k3t9x2/test_dev_ops:\$image_tag_new --destination=public.ecr.aws/n5k3t9x2/test_dev_ops:latest --single-snapshot --cache=false --cache-ttl=1h
                         aws ssm put-parameter --name "/test_dev_ops/successful-build" --type "String" --value \$image_tag_new --overwrite
                         """
                         echo "Image built and pushed successfully. New image tag: \$image_tag_new"
